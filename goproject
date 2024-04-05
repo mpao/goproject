@@ -1,0 +1,58 @@
+#!/bin/bash
+if [ "$1" == "" ]; then
+    echo "specifica il nome del modulo"
+	exit 1
+fi
+
+mkdir $1 && cd $1
+go mod init $1
+
+git config --global init.defaultBranch main
+git init > /dev/null
+
+cat <<EOT > .git/hooks/pre-commit
+#!/bin/bash
+# installa golangci https://golangci-lint.run/
+golangci-lint cache clean && golangci-lint run ./...
+EOT
+chmod +x .git/hooks/pre-commit
+
+touch .gitignore
+cat <<EOT > .gitignore
+bin/
+EOT
+touch README.md
+
+cp ../golangci.yaml .golangci.yaml
+
+cat <<EOT > Taskfile.yaml
+version: '3'
+
+env:
+  name: project-name
+  buildversion:
+    sh: 'git rev-parse --short main'
+tasks:
+  test:
+    cmds:
+      - go test -count=1 ./... -v -cover
+  lint:
+    cmds:
+      - golangci-lint cache clean && golangci-lint run ./...
+  clean:
+    dir: ./bin
+    cmds:
+      - rm *{{.buildversion}}*      
+  linux:
+    cmds:
+      - GOOS=linux go build -ldflags "-s -w" -o bin/{{.name}}-build.{{.buildversion}} ./
+  windows:
+    cmds:
+      - GOOS=windows go build -ldflags "-s -w" -o bin/{{.name}}-build.{{.buildversion}}.exe ./
+  build:
+    cmds:
+      - task: test
+      - task: windows
+      - task: linux
+EOT
+
