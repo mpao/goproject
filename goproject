@@ -38,11 +38,7 @@ tasks:
       - go test -count=1 ./... -v -cover
   lint:
     cmds:
-      - golangci-lint cache clean && golangci-lint run ./...
-  clean:
-    dir: ./bin
-    cmds:
-      - rm *{{.buildversion}}*      
+      - golangci-lint cache clean && golangci-lint run ./...    
   linux:
     cmds:
       - GOOS=linux go build -ldflags "-s -w" -o bin/{{.name}}-build.{{.buildversion}} ./
