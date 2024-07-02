@@ -28,6 +28,8 @@ cp ../golangci.yaml .golangci.yaml
 cat <<EOT > Taskfile.yaml
 version: '3'
 
+silent: true
+
 env:
   name: project-name
   buildversion:
