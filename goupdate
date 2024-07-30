@@ -12,7 +12,8 @@ go$1 download
 # aggiorna SDK e eseguibile
 ln -fs $DIR/sdk/bin/go $DIR/bin/
 SDK=`go$1 env GOROOT`
-cp -rf $SDK/* $DIR/sdk
+rm -rf $DIR/sdk
+mv $SDK/ $DIR/sdk
 # pulizia
 rm -rf $SDK
 rm -r ~/sdk
