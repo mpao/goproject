@@ -1,0 +1,21 @@
+#!/bin/bash
+if [ -z "$1" ]; then
+	echo "specificare la versione"
+	exit 1
+fi
+# dove è installato Go ?
+DIR=`go env GOPATH`
+cd "$DIR"
+# scarica la versione richiesta
+go install golang.org/dl/go$1@latest
+go$1 download
+# aggiorna SDK e eseguibile
+ln -fs $DIR/sdk/bin/go $DIR/bin/
+SDK=`go$1 env GOROOT`
+cp -rf $SDK/* $DIR/sdk
+# pulizia
+rm -rf $SDK
+rm -r ~/sdk
+rm $DIR/sdk/go$1*.tar.gz
+# exit
+echo `go version`
