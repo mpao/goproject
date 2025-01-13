@@ -23,7 +23,7 @@ bin/
 EOT
 touch README.md
 
-cp ../golangci.yaml .golangci.yaml
+cp /home/marco/Projects/golangci.yaml .golangci.yaml
 
 cat <<EOT > Taskfile.yaml
 version: "3"
@@ -34,8 +34,11 @@ env:
   name: projectName
   version: v0.0
   buildversion:
-    sh: "git rev-parse --short main"
+    sh: "if ! git rev-parse --short main > /dev/null 2>&1; then echo 'noversion'; else git rev-parse --short main; fi"
 tasks:
+  sec:
+    cmds:
+      - govulncheck ./...
   test:
     cmds:
       - go test -count=1 ./... -v -cover -race
@@ -61,13 +64,14 @@ tasks:
         GOOS=darwin GOARCH=arm64 go build \
         -ldflags="-s -w -X main.appVersion={{.version}} -X main.appName={{.name}}" \
         -o bin/{{.name}}-build.{{.buildversion}}-arm64 ./cmd
-  build:
+  release:
     cmds:
+      - task: sec
       - task: test
       - task: windows
       - task: linux
       - task: macos
-  release:
+  build:
     cmds:
       - go mod tidy
       - |
