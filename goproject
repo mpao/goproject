@@ -33,8 +33,10 @@ silent: true
 env:
   name: projectName
   version: v0.0
+  branch:
+    sh: "git rev-parse --abbrev-ref HEAD"
   buildversion:
-    sh: "if ! git rev-parse --short main > /dev/null 2>&1; then echo 'noversion'; else git rev-parse --short main; fi"
+    sh: "if ! git rev-parse --short {{.branch}} > /dev/null 2>&1; then echo 'noversion'; else git rev-parse --short {{.branch}}; fi"
 tasks:
   sec:
     cmds:
