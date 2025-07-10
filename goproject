@@ -12,7 +12,7 @@ git init > /dev/null
 
 cat <<EOT > .git/hooks/pre-commit
 #!/bin/bash
-# installa golangci https://golangci-lint.run/
+# install golangci https://golangci-lint.run/
 golangci-lint cache clean && golangci-lint run ./...
 EOT
 chmod +x .git/hooks/pre-commit
@@ -21,7 +21,44 @@ touch .gitignore
 cat <<EOT > .gitignore
 bin/
 EOT
+
 touch README.md
+cat <<EOT > README.md
+# $1
+
+## Descrizione
+Nessuna descrizione disponibile
+
+## Go Tools
+Se necessario, installa i seguenti strumenti:
+
+**1.** [Task](https://taskfile.dev/) - task è un task runner per Go, simile a \`make\` ma più semplice da usare
+\`\`\`bash
+$> go install github.com/go-task/task/v3/cmd/task@latest
+\`\`\`
+
+**2.** [Golangci-lint](https://golangci-lint.run/) - è un linter per Go che esegue diversi controlli di qualità del codice
+\`\`\`bash
+$> go install github.com/golangci/golangci-lint/v2/cmd/golangci-lint@latest
+\`\`\`
+
+## Compilazione e test
+Per compilare e testare il progetto, puoi utilizzare  \`task\` seguito da uno dei comandi disponibili:
+
+\`\`\`
+$> task
+task: Available tasks for this project:
+* build:         Compila l'applicazione per il sistema corrente
+* cert:          Copia i certificati SSL per il servizio
+* default:       Mostra questo messaggio
+* lint:          Esegue il linting del codice
+* linux:         Compila l'applicazione per Linux
+* release:       Compila l'applicazione multi-platform
+* sec:           Esegue il controllo di sicurezza del codice
+* test:          Esegue i test del servizio
+* windows:       Compila l'applicazione per Windows
+\`\`\`
+EOT
 
 cp /home/marco/Projects/golangci.yaml .golangci.yaml
 
