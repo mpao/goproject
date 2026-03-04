@@ -97,21 +97,21 @@ tasks:
       # multiline command vedi https://github.com/go-task/task/issues/274#issuecomment-565876913
       - |
         GOOS=linux go build \
-        -ldflags="-s -w -X main.appVersion={{.version}} -X main.appName={{.name}}" \
+        -trimpath -ldflags="-s -w -X main.appVersion={{.version}} -X main.appName={{.name}}" \
         -o bin/{{.name}}-build.{{.buildversion}} ./cmd
   windows:
     desc: "Compila l'applicazione per Windows"
     cmds:
       - |
         GOOS=windows go build \
-        -ldflags="-s -w -X main.appVersion={{.version}} -X main.appName={{.name}}" \
+        -trimpath -ldflags="-s -w -X main.appVersion={{.version}} -X main.appName={{.name}}" \
         -o bin/{{.name}}-build.{{.buildversion}}.exe ./cmd
   macos:
     desc: "Compila l'applicazione per MacOS"
     cmds:
       - |
         GOOS=darwin GOARCH=arm64 go build \
-        -ldflags="-s -w -X main.appVersion={{.version}} -X main.appName={{.name}}" \
+        -trimpath -ldflags="-s -w -X main.appVersion={{.version}} -X main.appName={{.name}}" \
         -o bin/{{.name}}-build.{{.buildversion}}-arm64 ./cmd
   release:
     desc: "Compila l'applicazione multi-platform"
