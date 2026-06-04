@@ -30,7 +30,7 @@ files=\$(git diff --cached --name-only --diff-filter=ACMR | grep '\.go$' || true
 if [ -n "$files" ]; then
     golangci-lint run $files
 fi
-govulncheck ./...
+govulncheck $files
 EOT
 chmod +x .git/hooks/pre-commit
 
