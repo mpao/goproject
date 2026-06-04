@@ -9,11 +9,28 @@ go mod init $1
 
 git config --global init.defaultBranch main
 git init > /dev/null
-
+rm .git/hooks/applypatch-msg.sample 
+rm .git/hooks/sendemail-validate.sample 
+rm .git/hooks/fsmonitor-watchman.sample 
+rm .git/hooks/post-update.sample
+rm .git/hooks/pre-applypatch.sample 
+rm .git/hooks/prepare-commit-msg.sample 
+rm .git/hooks/push-to-checkout.sample 
+rm .git/hooks/update.sample 
+rm .git/hooks/pre-receive.sample 
+rm .git/hooks/commit-msg.sample
 cat <<EOT > .git/hooks/pre-commit
 #!/bin/bash
-# install golangci https://golangci-lint.run/
-golangci-lint cache clean && golangci-lint run ./...
+# - esegue golangci solo sui file .go in staging
+# - esegue govulncheck
+set -Eeuo pipefail
+cd "\$(git rev-parse --show-toplevel)"
+golangci-lint cache clean
+files=\$(git diff --cached --name-only --diff-filter=ACMR | grep '\.go$' || true)
+if [ -n "$files" ]; then
+    golangci-lint run $files
+fi
+govulncheck ./...
 EOT
 chmod +x .git/hooks/pre-commit
 
