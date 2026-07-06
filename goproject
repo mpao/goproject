@@ -21,16 +21,9 @@ rm .git/hooks/pre-receive.sample
 rm .git/hooks/commit-msg.sample
 cat <<EOT > .git/hooks/pre-commit
 #!/bin/bash
-# - esegue golangci solo sui file .go in staging
-# - esegue govulncheck
-set -Eeuo pipefail
-cd "\$(git rev-parse --show-toplevel)"
-golangci-lint cache clean
-files=\$(git diff --cached --name-only --diff-filter=ACMR | grep '\.go$' || true)
-if [ -n "$files" ]; then
-    golangci-lint run $files
-fi
-govulncheck $files
+set -e
+golangci-lint cache clean && golangci-lint run ./...
+govulncheck ./...
 EOT
 chmod +x .git/hooks/pre-commit
 
